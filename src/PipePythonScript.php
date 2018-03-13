@@ -5,7 +5,7 @@ namespace Tequilarapido\PythonBridge;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
-class PipePythonRunner
+class PipePythonScript
 {
     /**
      * Full path to python script file.
@@ -43,18 +43,11 @@ class PipePythonRunner
     }
 
     /**
-     * Sets the command to pipe to the script.
+     * Set python executable/binary path
      *
-     * @param $pipe
+     * @param $pythonExecutable
      * @return $this
      */
-    public function setPipe($pipe)
-    {
-        $this->pipe = $pipe;
-
-        return $this;
-    }
-
     public function setPythonExecutable($pythonExecutable)
     {
         $this->pythonExecutable = $pythonExecutable;
@@ -63,9 +56,40 @@ class PipePythonRunner
     }
 
     /**
+     * Sets the command to pipe to the script.
+     *
+     * @param strin $pipe
+     *
+     * @return PythonResponse
+     * @throws PythonException
+     */
+    public function pipe($pipe)
+    {
+        $this->pipe = $pipe;
+
+        return $this->run();
+    }
+
+    /**
+     * Sets echo pipe. Passing simple string to the python script
+     * ie. echo 'a simple string' | python script.py
+     *
+     * @param string $string
+     * 
+     * @return PythonResponse
+     * @throws PythonException
+     */
+    public function echoPipe($string)
+    {
+        $escaped = str_replace("'", "\'", $string);
+
+        return $this->pipe("echo '" . $escaped . "'");
+    }
+
+    /**
      * Run the script and return output.
      *
-     * @return string output
+     * @return PythonResponse
      * @throws PythonException
      */
     public function run()
@@ -80,7 +104,7 @@ class PipePythonRunner
             );
         }
 
-        return $process->getOutput();
+        return new PythonResponse($process->getOutput());
     }
 
     /**
