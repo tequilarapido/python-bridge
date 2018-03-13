@@ -60,7 +60,7 @@ class PipePythonScript
      *
      * @param strin $pipe
      *
-     * @return PythonResponse
+     * @return Response
      * @throws PythonException
      */
     public function pipe($pipe)
@@ -75,8 +75,8 @@ class PipePythonScript
      * ie. echo 'a simple string' | python script.py
      *
      * @param string $string
-     * 
-     * @return PythonResponse
+     *
+     * @return Response
      * @throws PythonException
      */
     public function echoPipe($string)
@@ -89,12 +89,13 @@ class PipePythonScript
     /**
      * Run the script and return output.
      *
-     * @return PythonResponse
+     * @return Response
      * @throws PythonException
      */
     public function run()
     {
-        $this->setUtf8Context();
+        $this->beforeRun();
+
         $process = new Process($this->getCommand());
         $process->run();
 
@@ -104,7 +105,7 @@ class PipePythonScript
             );
         }
 
-        return new PythonResponse($process->getOutput());
+        return new Response($process->getOutput());
     }
 
     /**
@@ -115,6 +116,14 @@ class PipePythonScript
     public function getCommand()
     {
         return "{$this->pipe} | {$this->pythonExecutable} " . $this->script;
+    }
+
+    /**
+     * Hook to be run stuff before the script execution.
+     */
+    protected function beforeRun()
+    {
+        $this->setUtf8Context();
     }
 
     /**

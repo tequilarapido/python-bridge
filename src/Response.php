@@ -2,7 +2,7 @@
 
 namespace Tequilarapido\PythonBridge;
 
-class PythonResponse
+class Response
 {
     /** @var string */
     protected $output;
