@@ -9,7 +9,7 @@ class Response
 
     public function __construct($output)
     {
-        $this->output = $output;
+        $this->output = rtrim($output);
     }
 
     public function output()
@@ -19,7 +19,7 @@ class Response
 
     public function json()
     {
-        return json_decode($this->output);
+        return json_decode($this->output, JSON_OBJECT_AS_ARRAY);
     }
 
 }

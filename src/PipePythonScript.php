@@ -96,7 +96,7 @@ class PipePythonScript
     {
         $this->beforeRun();
 
-        $process = new Process($this->getCommand());
+        $process = Process::fromShellCommandline($this->getCommand());
         $process->run();
 
         if (!$process->isSuccessful()) {
@@ -115,7 +115,11 @@ class PipePythonScript
      */
     public function getCommand()
     {
-        return "{$this->pipe} | {$this->pythonExecutable} " . $this->script;
+        if (is_null($this->pipe)) {
+            return "{$this->pythonExecutable} {$this->script}";
+        }
+
+        return "{$this->pipe} | {$this->pythonExecutable}  {$this->script}";
     }
 
     /**
